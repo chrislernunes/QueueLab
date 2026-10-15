@@ -14,7 +14,7 @@ The session dataset is synthetic. It is not a Binance recording and it is not ev
 - Dataset: `data/processed/synthetic/session`
 - SHA-256: `248d43cac0a3f496fefedb4214b95df8d55e2708d68eced2f88e0ce9b26dd18f`
 - Symbol field: `BTCUSDT` (synthetic flag `True`)
-- Git commit recorded by the engine: `e0b51b7`
+- Git commit recorded by the engine: `6b6242d`
 - Intents: 80
 - Fee: 100 ppm. Scenario assumption, not a measured Binance fee tier.
 - Latency grid: Grid values are scenario assumptions, not measured network latency.

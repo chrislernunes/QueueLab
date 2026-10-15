@@ -5,7 +5,7 @@
   "symbol": "BTCUSDT",
   "synthetic": true,
   "notes": "Synthetic price-level session. Not Binance market data. Queue position is planted only through the generator's own rules and is not an exchange ground truth, except where a unit test builds an explicit scenario.",
-  "git": "e0b51b7",
+  "git": "6b6242d",
   "seed": 7,
   "fee_ppm": 100,
   "fee_note": "Scenario assumption, not a measured Binance fee tier.",

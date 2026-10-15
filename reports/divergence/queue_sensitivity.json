@@ -5,7 +5,7 @@
   "symbol": "SYN",
   "synthetic": true,
   "notes": "Constructed scenario, not market data. One passive buy is built so optimistic and conservative cancellation rules disagree.",
-  "git": "e0b51b7",
+  "git": "6b6242d",
   "seed": 1,
   "fee_ppm": 0,
   "fee_note": "Scenario assumption, not a measured Binance fee tier.",
