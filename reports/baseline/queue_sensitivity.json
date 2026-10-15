@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "dataset": "data/processed/synthetic/session",
+  "dataset_sha256": "248d43cac0a3f496fefedb4214b95df8d55e2708d68eced2f88e0ce9b26dd18f",
+  "symbol": "BTCUSDT",
+  "synthetic": true,
+  "notes": "Synthetic price-level session. Not Binance market data. Queue position is planted only through the generator's own rules and is not an exchange ground truth, except where a unit test builds an explicit scenario.",
+  "git": "e0b51b7",
+  "seed": 7,
+  "fee_ppm": 100,
+  "fee_note": "Scenario assumption, not a measured Binance fee tier.",
+  "latency_note": "Grid values are scenario assumptions, not measured network latency.",
+  "queue_note": "Differences across models are estimates under explicit assumptions, not observed queue positions.",
+  "n_intents": 40,
+  "horizons_us": [ 20000 ],
+  "bootstrap_samples": 100,
+  "bootstrap": "circular block bootstrap, block=floor(sqrt(n_accepted)), percentile 2.5/97.5",
+  "book_hash": "fd11f4eff6e97d8eb8d488bbf7d0d52c",
+  "data_quality_ok": true,
+  "cells": [
+    {
+      "model": "probabilistic",
+      "submit_delay_us": 1000,
+      "n_orders": 40,
+      "n_accepted": 40,
+      "n_filled": 36,
+      "book_hash": "fd11f4eff6e97d8eb8d488bbf7d0d52c",
+      "warnings": 34,
+      "sync_mode": "live"
+    }
+  ],
+  "executions_csv": "executions.csv",
+  "markouts_csv": "markouts.csv",
+  "sensitivity_csv": "sensitivity.csv",
+  "book_series_csv": "book_series.csv"
+}

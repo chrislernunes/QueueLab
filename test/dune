@@ -1,0 +1,4 @@
+(test
+ (name test_queuelab)
+ (flags (:standard -w -27-32-33-39))
+ (libraries queuelab qcheck-core qcheck-core.runner unix))

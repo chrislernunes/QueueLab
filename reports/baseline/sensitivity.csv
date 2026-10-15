@@ -1,0 +1,2 @@
+model,submit_delay_us,n_orders,n_accepted,n_filled,n_full,fill_rate,full_fill_rate,fill_rate_ci_lo,fill_rate_ci_hi,mean_filled_qty,mean_spread_capture,mean_implementation_shortfall,mean_markout,cancel_rate,partial_rate
+probabilistic,1000,40,40,36,34,0.900000,0.850000,0.850000,0.950000,17.42500000,4.02878788,-5.00000000,0.14285714,0.150000,0.050000

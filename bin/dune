@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name queuelab)
+ (flags (:standard -w -27-32-33-39))
+ (libraries queuelab unix))

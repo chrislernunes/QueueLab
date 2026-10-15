@@ -1,0 +1,15 @@
+_build/
+*.install
+.merlin
+.opam/
+_opam/
+*.exe
+*.native
+*.byte
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+data/raw/
+data/processed/capture/
+*.log
+.DS_Store

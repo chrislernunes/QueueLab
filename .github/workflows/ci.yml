@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ocaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: "5.3.0"
+      - name: dependencies
+        run: opam install . --deps-only --with-test -y
+      - name: build and test
+        run: opam exec -- dune build && opam exec -- dune runtest
+      - name: fixture, validate, experiment
+        run: |
+          opam exec -- dune exec queuelab -- generate-fixture --out data/processed/synthetic/session --steps 400 --seed 7
+          opam exec -- dune exec queuelab -- validate --dataset data/processed/synthetic/session
+          opam exec -- dune exec queuelab -- replay --dataset data/processed/synthetic/session
+          opam exec -- dune exec queuelab -- experiment --config configs/queue_sensitivity.json
+          opam exec -- dune exec queuelab -- normalize --raw test/fixtures/protocol_example --out /tmp/queuelab-protocol --symbol BTCUSDT
+      - name: capture frame self-test
+        run: python3 scripts/capture_binance.py --self-test
+      - name: python analysis imports
+        run: |
+          python3 -m pip install --user pandas numpy matplotlib seaborn
+          python3 -c "import pandas,numpy,matplotlib,seaborn; import json; json.load(open('reports/queue_sensitivity.json'))"

@@ -1,0 +1,5 @@
+{"rx_us":1000,"kind":"ws","payload":{"stream":"btcusdt@depth@100ms","data":{"e":"depthUpdate","E":1,"s":"BTCUSDT","U":100,"u":100,"b":[["100.00","1.00000"]],"a":[["100.10","1.00000"]]}}}
+{"rx_us":5000,"kind":"snapshot","payload":{"lastUpdateId":100,"bids":[["100.00","1.50000"]],"asks":[["100.10","2.00000"]]}}
+{"rx_us":6000,"kind":"ws","payload":{"stream":"btcusdt@depth@100ms","data":{"e":"depthUpdate","E":2,"s":"BTCUSDT","U":101,"u":101,"b":[["100.00","2.00000"]],"a":[]}}}
+{"rx_us":7000,"kind":"ws","payload":{"stream":"btcusdt@trade","data":{"e":"trade","E":3,"s":"BTCUSDT","t":1,"p":"100.00","q":"0.10000","T":3,"m":true}}}
+{"rx_us":8000,"kind":"ws","payload":{"stream":"btcusdt@depth@100ms","data":{"e":"depthUpdate","E":4,"s":"BTCUSDT","U":101,"u":101,"b":[["100.00","9.00000"]],"a":[]}}}

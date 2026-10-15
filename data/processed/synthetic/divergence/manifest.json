@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "symbol": "SYN",
+  "market": "spot",
+  "synthetic": true,
+  "instrument": {
+    "symbol": "SYN",
+    "price_scale": 0,
+    "qty_scale": 0,
+    "tick": 1,
+    "lot": 1
+  },
+  "capture_version": "constructed-divergence-1",
+  "time_start_us": 1000,
+  "time_end_us": 4000,
+  "counts": { "depth": 3, "snapshot": 1, "trade": 1 },
+  "gaps": [],
+  "files": [
+    {
+      "name": "events.jsonl",
+      "sha256": "4fea6d8c3a73869b35b291e12cac96a0df9684caf8ec8bdaebf39e840ee0ca39",
+      "bytes": 1047
+    }
+  ],
+  "notes": "Constructed scenario, not market data. One passive buy is built so optimistic and conservative cancellation rules disagree.",
+  "trade_source": "raw"
+}

@@ -1,0 +1,7 @@
+model,offset_ticks,n,mean_filled,fill_rate
+conservative,0,40,78.375,0.9
+conservative,1,40,66.025,0.775
+optimistic,0,40,78.375,0.9
+optimistic,1,40,66.025,0.775
+probabilistic,0,40,78.375,0.9
+probabilistic,1,40,66.025,0.775

@@ -1,0 +1,5 @@
+{"schema":1,"symbol":"SYN","receive_time_us":1000,"seq_index":0,"synthetic":true,"provenance":"constructed-divergence","kind":"snapshot","last_update_id":100,"bids":[[100,10],[99,20]],"asks":[[101,8]],"exchange_time_us":1000}
+{"schema":1,"symbol":"SYN","receive_time_us":2000,"seq_index":1,"synthetic":true,"provenance":"constructed-divergence","kind":"depth","U":101,"u":101,"bids":[[100,15]],"asks":[],"exchange_time_us":2000}
+{"schema":1,"symbol":"SYN","receive_time_us":3000,"seq_index":2,"synthetic":true,"provenance":"constructed-divergence","kind":"depth","U":102,"u":102,"bids":[[100,9]],"asks":[],"exchange_time_us":3000}
+{"schema":1,"symbol":"SYN","receive_time_us":4000,"seq_index":3,"synthetic":true,"provenance":"constructed-divergence","kind":"trade","trade_id":7,"price":100,"qty":5,"buyer_is_maker":true,"exchange_time_us":4000}
+{"schema":1,"symbol":"SYN","receive_time_us":4000,"seq_index":4,"synthetic":true,"provenance":"constructed-divergence","kind":"depth","U":103,"u":103,"bids":[[100,4]],"asks":[],"exchange_time_us":4000}

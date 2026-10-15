@@ -1,0 +1,2 @@
+model,submit_delay_us,order_id,side,horizon_us,signed_markout,vol_bucket
+optimistic,0,1,buy,1000,,low

@@ -1,0 +1,6 @@
+{
+  "command": "python3 scripts/capture_binance.py --symbol BTCUSDT --duration-seconds 8 --out data/raw/smoke",
+  "result": "The process exited 1 with `capture failed: HTTP Error 451` from the stdlib client. No raw.jsonl was written. The failure happened on the first REST call (exchangeInfo), before a websocket frame or a snapshot was stored.",
+  "messages": 0,
+  "interpretation": "This build environment could not read Binance public REST. The live book was not captured here, and no depth was invented to replace it. The offline protocol example in test/fixtures/protocol_example did normalize to a live book (5 events, 0 gaps). A reviewer with network access to api.binance.com and stream.binance.com can run the capture command; this note is not that run."
+}

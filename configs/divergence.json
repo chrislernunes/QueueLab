@@ -1,0 +1,22 @@
+{
+  "dataset": "data/processed/synthetic/divergence",
+  "seed": 1,
+  "queue_models": ["conservative", "probabilistic", "optimistic"],
+  "submit_delay_grid_us": [0],
+  "md_delay_us": 0,
+  "decision_delay_us": 0,
+  "cancel_delay_us": 0,
+  "fee_ppm": 0,
+  "markout_horizons_us": [1000],
+  "vol_low_lt": 1,
+  "vol_high_ge": 5,
+  "bootstrap_samples": 50,
+  "intents": {
+    "mode": "explicit",
+    "orders": [
+      {"id": 1, "release_us": 1500, "side": "buy", "qty": 4, "offset_ticks": 0}
+    ]
+  },
+  "output_dir": "reports/divergence",
+  "trace": true
+}

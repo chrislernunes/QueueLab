@@ -1,0 +1,16 @@
+model,submit_delay_us,order_id,time_us,event_seq,kind,ahead_public,ahead_sim,displayed
+conservative,0,1,1500,-1,join,10,0,10
+conservative,0,1,2000,1,depth,10,0,15
+conservative,0,1,3000,2,depth,9,0,9
+conservative,0,1,4000,3,trade_at_price,4,0,5
+conservative,0,1,4000,4,depth,4,0,4
+probabilistic,0,1,1500,-1,join,10,0,10
+probabilistic,0,1,2000,1,depth,10,0,15
+probabilistic,0,1,3000,2,depth,7,0,9
+probabilistic,0,1,4000,3,trade_at_price,2,0,5
+probabilistic,0,1,4000,4,depth,2,0,4
+optimistic,0,1,1500,-1,join,10,0,10
+optimistic,0,1,2000,1,depth,10,0,15
+optimistic,0,1,3000,2,depth,4,0,9
+optimistic,0,1,4000,3,trade_at_price,0,0,5
+optimistic,0,1,4000,4,depth,0,0,4

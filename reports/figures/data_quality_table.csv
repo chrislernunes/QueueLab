@@ -1,0 +1,17 @@
+item,value
+symbol,BTCUSDT
+synthetic,True
+sync_mode,live
+gaps,0
+duplicates,0
+crossed_observations,0
+events_consumed,5357
+book_hash,fd11f4eff6e97d8eb8d488bbf7d0d52c
+count_depth,4000
+count_snapshot,1
+count_trade,1356
+interarrival_us_n,5356
+interarrival_us_min,0
+interarrival_us_p50,1000
+interarrival_us_p90,1000
+interarrival_us_max,1000

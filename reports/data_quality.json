@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "errors": [],
+  "symbol": "BTCUSDT",
+  "synthetic": true,
+  "notes": "Synthetic price-level session. Not Binance market data. Queue position is planted only through the generator's own rules and is not an exchange ground truth, except where a unit test builds an explicit scenario.",
+  "sync_mode": "live",
+  "book_hash": "fd11f4eff6e97d8eb8d488bbf7d0d52c",
+  "counts": { "depth": 4000, "snapshot": 1, "trade": 1356 },
+  "interarrival_us": {
+    "n": 5356,
+    "min": 0,
+    "p50": 1000,
+    "p90": 1000,
+    "max": 1000
+  },
+  "rx_minus_ex_us": { "n": 5356, "min": 0, "p50": 0, "p90": 0, "max": 0 },
+  "crossed_observations": 0,
+  "duplicates": 0,
+  "gaps": 0,
+  "events_consumed": 5357,
+  "limitations": [
+    "Public Binance depth is market-by-price. Queue position is not observed.",
+    "rx_minus_ex mixes two clocks and is not a latency measurement."
+  ]
+}

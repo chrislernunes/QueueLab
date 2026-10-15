@@ -1,0 +1,6 @@
+(library
+ (name queuelab)
+ (public_name queuelab)
+ (wrapped true)
+ (flags (:standard -w -27-32-33-39))
+ (libraries yojson unix))

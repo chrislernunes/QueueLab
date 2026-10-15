@@ -1,0 +1,4 @@
+model,submit_delay_us,order_id,side,offset_ticks,price,orig_qty,filled_qty,status,decision_us,arrival_us,first_fill_us,done_us,decision_mid,avg_fill_price,spread_capture,implementation_shortfall,fee_ppm,touch_qty,size_vs_depth_bps,vol_abs,vol_bucket,spread,spread_bucket,n_fills
+conservative,0,1,buy,0,100,4,0,working,1500,1500,,,100,,,,0,10,4000,0,low,1,tight,0
+probabilistic,0,1,buy,0,100,4,0,working,1500,1500,,,100,,,,0,10,4000,0,low,1,tight,0
+optimistic,0,1,buy,0,100,4,1,working,1500,1500,4000,,100,100,0.00000000,0.00000000,0,10,4000,0,low,1,tight,1

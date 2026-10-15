@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "note": "Measured on the machine that ran queuelab benchmark. Do not cite as a hardware-independent throughput.",
+  "uname": "Linux 6.12.8+",
+  "cpu": "Intel(R) Xeon(R) Platinum 8481C CPU @ 2.70GHz",
+  "meminfo": "MemTotal:        4024496 kB",
+  "ocaml": "5.3.0",
+  "profile": "release",
+  "dataset": "data/processed/synthetic/session",
+  "dataset_events": 5357,
+  "dataset_synthetic": true,
+  "dataset_replay": {
+    "repeats": 5,
+    "min_s": 0.003167867660522461,
+    "median_s": 0.0032639503479003906,
+    "max_s": 0.0036652088165283203
+  },
+  "synthetic_steps": 200000,
+  "synthetic_events": 266598,
+  "synthetic_replay": {
+    "repeats": 3,
+    "min_s": 0.23004603385925293,
+    "median_s": 0.23463106155395508,
+    "max_s": 0.250762939453125
+  },
+  "json_roundtrip_20k": {
+    "repeats": 3,
+    "min_s": 0.1018528938293457,
+    "median_s": 0.10198283195495605,
+    "max_s": 0.10530996322631836
+  },
+  "checkpoint_roundtrip_synthetic": {
+    "repeats": 3,
+    "min_s": 3.814697265625e-06,
+    "median_s": 4.0531158447265625e-06,
+    "max_s": 5.0067901611328125e-06
+  },
+  "queue_sim_one_order_synthetic": {
+    "repeats": 3,
+    "min_s": 0.36919307708740234,
+    "median_s": 0.3693201541900635,
+    "max_s": 0.40346503257751465
+  },
+  "events_per_second_synthetic_median": 1136243.4207744226
+}

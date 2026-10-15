@@ -1,0 +1,7 @@
+{
+  "symbol": "BTCUSDT",
+  "price_scale": 2,
+  "qty_scale": 5,
+  "tick": 1,
+  "lot": 1
+}

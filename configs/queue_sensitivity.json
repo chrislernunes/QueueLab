@@ -1,0 +1,26 @@
+{
+  "dataset": "data/processed/synthetic/session",
+  "seed": 7,
+  "queue_models": ["conservative", "probabilistic", "optimistic"],
+  "submit_delay_grid_us": [0, 1000, 5000, 20000],
+  "md_delay_us": 0,
+  "decision_delay_us": 0,
+  "cancel_delay_us": 2000,
+  "fee_ppm": 100,
+  "markout_horizons_us": [5000, 20000, 100000],
+  "vol_low_lt": 2,
+  "vol_high_ge": 8,
+  "bootstrap_samples": 200,
+  "intents": {
+    "mode": "passive_grid",
+    "every_us": 80000,
+    "qty": 90,
+    "offsets": [0, 1],
+    "sides": ["buy", "sell"],
+    "cancel_after_us": 400000,
+    "max_orders": 80,
+    "start_delay_us": 5000
+  },
+  "output_dir": "reports",
+  "trace": false
+}
