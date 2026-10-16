@@ -1,8 +1,6 @@
 # QueueLab
 
-Deterministic market-data replay, queue-position inference and passive-execution simulation. OCaml for the engine. Python only for tables and figures.
-
-This is not a trading bot, not a venue emulator, and not a dashboard. It does not send orders. Nothing here is a Jane Street project or an endorsement.
+Deterministic market-data replay, queue-position inference and passive-execution simulation in OCaml.
 
 Research question: how sensitive are passive fill probability, execution cost and adverse selection to queue-position assumptions and order-entry latency?
 
