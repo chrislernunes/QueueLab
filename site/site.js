@@ -1,6 +1,20 @@
 /* Load committed report files and draw them. Does not invent rows. */
 (function () {
   const scriptURL = document.currentScript && document.currentScript.src;
+  const nav = document.querySelector(".nav");
+  const toggle = document.querySelector(".nav-toggle");
+  if (nav && toggle) {
+    const close = () => {
+      nav.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    };
+    toggle.addEventListener("click", () => {
+      const open = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    nav.querySelectorAll(".nav-links a").forEach((a) => a.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  }
   const MODELS = ["conservative", "probabilistic", "optimistic"];
   const COLORS = { conservative: "#141414", probabilistic: "#6a6a6a", optimistic: "#b5b5b5" };
 
