@@ -54,7 +54,9 @@ let parse_fixed s ~scale =
                     match add n d with
                     | Error _ -> overflow
                     | Ok n -> scan (i + 1) n frac_acc frac_digits false)
-              else if frac_digits >= scale then Error "extra fractional digits"
+              else if frac_digits >= scale then
+                if d = 0L then scan (i + 1) int_acc frac_acc frac_digits true
+                else Error "extra fractional digits"
               else
                 match mul frac_acc 10L with
                 | Error _ -> overflow
