@@ -4,7 +4,7 @@ Deterministic market-data replay, queue-position inference and passive-execution
 
 Research question: how sensitive are passive fill probability, execution cost and adverse selection to queue-position assumptions and order-entry latency?
 
-The committed numerical answer is in [reports/execution_research.md](reports/execution_research.md). It is a labeled synthetic run. Read it before quoting a fill rate.
+The committed numerical answer is in [reports/execution_research.md](reports/execution_research.md). It is a labeled synthetic run. Read it before quoting a fill rate. A static rendering of the same files is the GitHub Pages site, once Pages is enabled from the `pages` workflow.
 
 ## Layout
 
@@ -13,6 +13,7 @@ The committed numerical answer is in [reports/execution_research.md](reports/exe
 - `configs/` experiment files
 - `data/processed/synthetic/` fixtures this repository is allowed to ship
 - `scripts/` Binance capture client, figure builder, research note
+- `site/` static GitHub Pages rendering of the committed reports
 - `docs/` semantics and limits
 
 Details: [docs/architecture.md](docs/architecture.md), [docs/queue_models.md](docs/queue_models.md), [docs/assumptions_and_limitations.md](docs/assumptions_and_limitations.md).

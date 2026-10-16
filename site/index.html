@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QueueLab — deterministic replay and queue-position research</title>
+  <meta name="description" content="QueueLab is an OCaml research engine for deterministic market replay, queue-position inference, and passive-execution simulation. Synthetic results only; no live Binance book is committed.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top">QueueLab</a>
+      <div class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#validation">Validation</a>
+        <a href="#limits">Limits</a>
+        <a href="#usage">Usage</a>
+        <a href="#notes">Notes</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="wrap">
+      <p class="kicker">Research engine · OCaml · synthetic session committed</p>
+      <h1>QueueLab</h1>
+      <p class="subtitle">Deterministic replay and queue-position research for passive execution.</p>
+      <p class="lede">A passive order’s fill depends on queue priority the public feed does not contain. QueueLab replays a price-level book, places hypothetical orders under explicit latency and queue assumptions, and records where those assumptions change the answer. It does not send orders and it is not a trading system.</p>
+      <div class="links">
+        <a href="https://github.com/chrislernunes/QueueLab">GitHub</a>
+        <a href="https://github.com/chrislernunes/QueueLab/tree/main/docs">Documentation</a>
+        <a href="#notes">Research report</a>
+        <a class="ghost" href="https://github.com/chrislernunes/QueueLab/blob/main/reports/execution_research.md">execution_research.md</a>
+      </div>
+      <div class="facts" id="facts">
+        <div class="fact"><span>Language</span><b>OCaml 5.3</b><small>stdlib + Yojson</small></div>
+        <div class="fact"><span>Committed run</span><b>synthetic</b><small>loading…</small></div>
+        <div class="fact"><span>Replay</span><b>—</b><small>loading bench.json</small></div>
+        <div class="fact"><span>Live capture</span><b>none committed</b><small>client exists</small></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="problem">
+    <div class="wrap">
+      <p class="section-label">01 — The research problem</p>
+      <h2>Passive execution is a queue problem the tape does not solve.</h2>
+      <div class="grid-2">
+        <div>
+          <p>A limit order that does not cross rests behind displayed size. Whether it fills depends on who cancels, who trades, and where it sat. Public Binance spot depth is market-by-price: each update is an absolute quantity at a price, not an order identity. A decrease can be a cancel, a trade the feed has not yet paired, or both. The slot of an order that was never sent is not in the file.</p>
+          <p>The quantities that matter for a passive decision — fill probability, implementation shortfall against the decision mid, and later adverse selection — are therefore estimates under a queue rule, not observations. Changing the rule, or the delay before the order arrives, can change the estimate. That sensitivity is the object of study.</p>
+        </div>
+        <div>
+          <h3>What the public book can show</h3>
+          <p class="muted">Displayed size at a price, best bid and ask, spread, mid, and prints with price, quantity, and a maker flag.</p>
+          <h3>What it cannot show</h3>
+          <p class="muted">Which resting order was cancelled. Hidden size. The queue slot of a hypothetical order. One-way latency. A historical L2 book from the public trade dumps — those dumps do not include diff depth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <p class="section-label">02 — System architecture</p>
+      <h2>One direction: events in, a book, then a counterfactual order.</h2>
+      <p class="muted">Stages below are the modules that exist. Simulated orders never enter the public book. Python reads files the OCaml engine already wrote.</p>
+      <div class="pipe">
+        <div class="stage"><span class="n">01</span><strong>Capture or fixture</strong><p><code>scripts/capture_binance.py</code> or <code>generate-fixture</code>. Capture is public streams, no API key, no orders.</p></div>
+        <div class="stage"><span class="n">02</span><strong>Normalize</strong><p><code>binance_decoder</code> turns REST snapshots and stream payloads into canonical events. Exchange timestamps are ms stored as µs.</p></div>
+        <div class="stage"><span class="n">03</span><strong>Validate</strong><p>Manifest checksum, mixed-symbol checks, then a replay. An experiment refuses a dataset that fails.</p></div>
+        <div class="stage"><span class="n">04</span><strong>Depth sync + replay</strong><p>Spot diff rules. Total order is exchange time, then kind, then <code>seq_index</code>.</p></div>
+        <div class="stage"><span class="n">05</span><strong>Queue + fills</strong><p>Three models share join-at-back. Trades are the only fills. Ledger is integer average cost.</p></div>
+        <div class="stage"><span class="n">06</span><strong>Experiment</strong><p>Latency grid or explicit intents. CSV and JSON under <code>reports/</code>. Figures are a later Python step.</p></div>
+        <div class="stage"><span class="n">07</span><strong>Checkpoint</strong><p>Saved state is the depth-sync record, not the book alone. Suffix replay must match the full hash.</p></div>
+        <div class="stage"><span class="n">08</span><strong>Benchmark</strong><p>Wall-clock of this binary, this machine. Not a portable throughput claim.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="wrap">
+      <p class="section-label">03 — How it works</p>
+      <h2>Integrity first, then an explicit fiction about the queue.</h2>
+      <div class="grid-2">
+        <div>
+          <h3>Normalization and integrity</h3>
+          <p>Canonical events are snapshot, depth, trade, aggregate trade, and gap. Prices and quantities are integers at the instrument scale. Extra fractional digits are an error. A dataset is a <code>manifest.json</code> plus <code>events.jsonl</code>. Validation recomputes the SHA-256 and fails on a mismatch, a gap, a broken sync, a negative quantity, or mixed symbols.</p>
+          <h3>Book and replay</h3>
+          <p>The book is a map from price to displayed quantity. Zero deletes. Replay orders by exchange time when it is non-zero, otherwise receive time. On a tie the order is snapshot, trade, aggregate trade, depth, gap, then source index. Trades sit before a same-timestamp depth update so a print is not also counted as a cancel. That is a documented tie policy, not a claim of exchange causality. Two replays of the same file produce the same book hash.</p>
+          <h3>Queue inference</h3>
+          <p>Every model joins at the back of displayed size, after subtracting prints at that price the book update has not yet absorbed. Earlier simulated orders at the same price are known and sit in <code>ahead_sim</code>. Unexplained decrease <code>C</code> is displayed size that disappeared and was not a print. Conservative takes <code>C</code> from behind first. Optimistic takes it from ahead first. Probabilistic draws a seeded binomial with probability <code>ahead_public / (ahead_public + behind)</code>, exact at or below 4096, normal approximation above. Adds join behind. A depth decrease is not itself a fill.</p>
+        </div>
+        <div>
+          <h3>Fills, cancels, cost</h3>
+          <p>A trade at the limit consumes public ahead, then simulated ahead, then the order. A trade strictly through the limit fills the residual. Aggregate trades are ignored for fills when raw trades exist. A cancel that is effective at or before arrival is rejected and never rests. A fill during an in-flight cancel stands. Spread capture on a buy is <code>mid_at_fill − price</code>. Implementation shortfall on a buy is <code>price − decision_mid</code>. Fees hit the ledger immediately and are not subtracted again in those columns. Markouts use a later mid and are ex-post only.</p>
+          <h3>Sensitivity and disagreement</h3>
+          <p>The session grid varies submit delay and queue model on one synthetic book. The five-event divergence fixture is built so the cancellation rules can disagree. Report both. Do not average the models into a true queue.</p>
+          <pre><code>dune exec queuelab -- experiment \
+  --config configs/queue_sensitivity.json
+dune exec queuelab -- experiment \
+  --config configs/divergence.json</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="wrap">
+      <p class="section-label">04 — Results and experiments</p>
+      <h2>Synthetic session, then a constructed disagreement.</h2>
+      <p>Every number on this page is read from a file under <code>reports/</code>. The session is <code>data/processed/synthetic/session</code>, seed 7, 4000 steps, symbol field <code>BTCUSDT</code>, <code>synthetic: true</code>. It is not a Binance recording. Prices are integer price units. On this fixture <code>price_scale</code> is 2, so one unit is 0.01 of the quote currency. Quantities use <code>qty_scale</code> 4. Those scales are a scenario assumption, not a live <code>exchangeInfo</code> response.</p>
+      <div class="callout" id="finding">
+        <p>Loading the session table…</p>
+      </div>
+      <div id="results-error" class="error" hidden></div>
+      <div class="charts" id="charts"></div>
+      <h3>Session sensitivity</h3>
+      <p class="muted">Fill rate is the fraction of accepted orders with <code>filled_qty > 0</code>. Intervals are circular block bootstrap, block <code>floor(sqrt n)</code>, percentile 2.5/97.5, 200 resamples. They are not a claim of correct coverage under every dependence structure.</p>
+      <div class="table-wrap" id="sensitivity-table"></div>
+      <h3>Experiment configurations</h3>
+      <div class="table-wrap" id="config-table"></div>
+      <h3>Smaller probabilistic run</h3>
+      <p class="muted"><code>configs/baseline.json</code> is the same session, one model, quantity 20, 40 orders. It is a second synthetic cell, not a live comparison.</p>
+      <div class="table-wrap" id="baseline-table"></div>
+    </div>
+  </section>
+
+  <section id="validation">
+    <div class="wrap">
+      <p class="section-label">05 — Validation and reproducibility</p>
+      <h2>Tests lock the engine. They do not certify a fill on Binance.</h2>
+      <div class="grid-2">
+        <div>
+          <p><code>dune runtest</code> covers checksums, depth sync, duplicate and gap handling, replay determinism, checkpoint resume, queue-model disagreement on the divergence events, no double-count of a print, cancel/fill races, ledger identities, fee arithmetic, Binance JSON decode, and a QCheck random book update. The property test prints a seed. Frame encode/decode for the capture socket is <code>python3 scripts/capture_binance.py --self-test</code>.</p>
+          <p>Passing those tests means the stated rules are implemented and deterministic. It does not mean a modeled fill would have been the exchange’s fill. The session’s equal fill rates across models are an allowed result of the generator. They are not allowed to be silently forced apart.</p>
+          <h3>Data-quality summary</h3>
+          <div class="table-wrap" id="quality-table"></div>
+        </div>
+        <div>
+          <h3>Checks the protocol names</h3>
+          <table>
+            <thead><tr><th>Check</th><th>What it is</th></tr></thead>
+            <tbody>
+              <tr><td>Checksum</td><td>Event-file SHA-256 matches the manifest.</td></tr>
+              <tr><td>Sync</td><td>Drop <code>u ≤ lastUpdateId</code>, bridge on the next id, gap if the chain breaks. No invented <code>pu</code>.</td></tr>
+              <tr><td>Replay hash</td><td>Two full replays match. Checkpoint plus suffix matches the full hash.</td></tr>
+              <tr><td>Book</td><td>Off-tick, off-lot, and negative sizes rejected. Zero deletes.</td></tr>
+              <tr><td>Divergence</td><td>Same events: conservative fill 0, optimistic fill 1.</td></tr>
+              <tr><td>No double count</td><td>A print and the depth update that reflects it do not fill twice.</td></tr>
+              <tr><td>Ledger</td><td><code>equity = cash + mark·position = realized + unrealized</code>.</td></tr>
+              <tr><td>Isolation</td><td>Simulated orders do not change the book hash.</td></tr>
+            </tbody>
+          </table>
+          <p class="muted">Source: <a href="https://github.com/chrislernunes/QueueLab/blob/main/docs/validation_protocol.md">docs/validation_protocol.md</a>. Read <code>reports/divergence/trace.csv</code> before claiming a fill.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="limits">
+    <div class="wrap">
+      <p class="section-label">06 — Limitations</p>
+      <h2>These are part of the result, not a footnote.</h2>
+      <div class="grid-3">
+        <div>
+          <h3>Market-by-price</h3>
+          <p class="muted">Public Binance depth is an absolute quantity at a price. Individual order identity and true queue position are not in the feed and must be inferred.</p>
+        </div>
+        <div>
+          <h3>Synthetic is not live</h3>
+          <p class="muted">The committed experiments validate controlled scenarios. They are not evidence of live-market fill probability or of profitable execution.</p>
+        </div>
+        <div>
+          <h3>Replay is not prediction</h3>
+          <p class="muted">A matching book hash means the engine applied the file. It does not mean the queue model is the exchange, or that a decision using it would have made money.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <p>No live Binance depth is in the committed dataset. A capture attempt in this build environment failed with HTTP 451 on the first REST call. No raw file was written and no depth was invented. The offline protocol fixture in <code>test/fixtures/protocol_example</code> did normalize to a live book. A capture with network access to Binance is a different run and is not redistributed here.</p>
+      </div>
+      <p class="muted">Latency values in the grid are scenario assumptions, not measured round-trips. The 100 ppm fee is not a Binance fee-tier lookup. <code>Int64</code> multiplication in the ledger wraps on overflow. The probabilistic normal tail for <code>n > 4096</code> is not an exact binomial. Block bootstrap does not remove all dependence. Fuller list: <a href="https://github.com/chrislernunes/QueueLab/blob/main/docs/assumptions_and_limitations.md">docs/assumptions_and_limitations.md</a>.</p>
+    </div>
+  </section>
+
+  <section id="usage">
+    <div class="wrap">
+      <p class="section-label">07 — Repository and usage</p>
+      <h2>Commands from the current CLI.</h2>
+      <div class="grid-2">
+        <div>
+          <h3>Build and test</h3>
+          <pre><code>opam install . --deps-only --with-test
+dune build
+dune runtest
+python3 scripts/capture_binance.py --self-test</code></pre>
+          <h3>Fixture, validate, replay</h3>
+          <pre><code>dune exec queuelab -- generate-fixture \
+  --out data/processed/synthetic/session --steps 4000 --seed 7
+dune exec queuelab -- validate \
+  --dataset data/processed/synthetic/session
+dune exec queuelab -- replay \
+  --dataset data/processed/synthetic/session</code></pre>
+        </div>
+        <div>
+          <h3>Normalize, capture, benchmark</h3>
+          <pre><code>dune exec queuelab -- normalize \
+  --raw test/fixtures/protocol_example \
+  --out /tmp/queuelab-protocol --symbol BTCUSDT
+dune exec queuelab -- capture \
+  --symbol BTCUSDT --duration-seconds 30 \
+  --out data/raw/btcusdt-30
+QUEUELAB_PROFILE=release dune exec --profile release \
+  queuelab -- benchmark \
+  --dataset data/processed/synthetic/session \
+  --synthetic-events 200000 --out reports/bench.json</code></pre>
+          <p class="muted">Exit codes: 0 success, 1 failed validation or a gap, 2 bad usage. <code>simulate</code> and <code>experiment</code> are the same runner. Do not commit raw captures.</p>
+        </div>
+      </div>
+      <h3>Where to read</h3>
+      <table>
+        <thead><tr><th>Path</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/lib">lib/</a></td><td>Replay, depth sync, queue models, fill engine, ledger, experiment.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/QueueLab/blob/main/bin/main.ml">bin/main.ml</a></td><td>CLI: validate, replay, generate-fixture, experiment, benchmark, normalize, capture.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/configs">configs/</a></td><td>Session grid, divergence, baseline.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/test">test/</a></td><td>Engine tests and the hand-built protocol fixture.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/docs">docs/</a></td><td>Architecture, queue models, exchange semantics, validation, limits.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/reports">reports/</a></td><td>Committed synthetic outputs, benchmark, research note, figures.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="notes">
+    <div class="wrap">
+      <p class="section-label">08 — Research notes</p>
+      <h2>The committed note, unchanged.</h2>
+      <p class="muted">Rendered from <code>reports/execution_research.md</code>. If the CSVs change, regenerate that file with <code>python3 scripts/write_report.py</code>. Do not hand-edit the numbers.</p>
+      <div class="report" id="report">Loading the research note…</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      QueueLab · MIT · Copyright Chrisler Nunes, 2026. Not a trading bot. Not a Jane Street project.
+    </div>
+  </footer>
+  <script src="site.js"></script>
+</body>
+</html>

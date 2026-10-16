@@ -1,4 +1,4 @@
-.PHONY: build test release experiment bench validate replay fixture figures
+.PHONY: build test release experiment bench validate replay fixture figures site
 
 OPAMROOT ?= /opt/opam
 export OPAMROOT
@@ -33,5 +33,8 @@ bench: release fixture
 
 figures:
 	python3 scripts/build_figures.py
+
+site:
+	sh scripts/assemble_site.sh _site
 
 all: test experiment bench figures
