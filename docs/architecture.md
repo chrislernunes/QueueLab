@@ -1,6 +1,6 @@
 # Architecture
 
-QueueLab is a sequential, deterministic research engine. Network capture is outside the simulator. Notebooks read files the simulator already wrote.
+QueueLab is a sequential, deterministic research engine. Network capture is outside the simulator. Figure scripts read files the simulator already wrote.
 
 ## Libraries
 
@@ -46,4 +46,4 @@ The OCaml side uses the compiler standard library plus Yojson. It does not use C
 
 ## Dependencies
 
-One direction: decoder and synthetic produce events, replay consumes them, the fill engine consumes a replayed stream plus intents, the experiment writer consumes the fill engine. Notebooks are not imported by OCaml.
+One direction: decoder and synthetic produce events, replay consumes them, the fill engine consumes a replayed stream plus intents, the experiment writer consumes the fill engine. Python figure scripts are not imported by OCaml.

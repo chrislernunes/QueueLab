@@ -1,4 +1,4 @@
-.PHONY: build test release experiment bench validate replay fixture docs-figures
+.PHONY: build test release experiment bench validate replay fixture figures
 
 OPAMROOT ?= /opt/opam
 export OPAMROOT

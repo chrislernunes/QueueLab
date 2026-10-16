@@ -1,4 +1,4 @@
-(** Seeded synthetic books for tests, CI and the research notebooks.
+(** Seeded synthetic books for tests, CI and the committed fixtures.
 
     These are not Binance recordings. Every event is marked [synthetic=true].
     The generator is deterministic in [seed]. *)

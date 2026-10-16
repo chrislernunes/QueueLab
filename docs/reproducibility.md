@@ -40,18 +40,15 @@ Record `uname`, `/proc/cpuinfo`, OCaml version and the profile field with the nu
 
 ```
 python3 -m pip install -r requirements.txt
-python3 -m ipykernel install --user --name queuelab
 python3 scripts/build_figures.py
 python3 scripts/write_report.py
-python3 scripts/make_notebooks.py
-python3 scripts/execute_notebooks.py
 ```
 
-Notebooks and `write_report.py` fail if an input file is missing. They do not synthesize a replacement table.
+`write_report.py` fails if an input file is missing. It does not synthesize a replacement table.
 
 ## Offline
 
-After the opam switch and the Python packages are installed, tests, replay, the synthetic experiment and the notebooks do not need the network. `queuelab capture` does. A failed capture is a failed capture, not a license to invent depth.
+After the opam switch and the Python packages are installed, tests, replay and the synthetic experiment do not need the network. `queuelab capture` does. A failed capture is a failed capture, not a license to invent depth.
 
 ## Git
 

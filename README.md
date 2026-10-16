@@ -14,7 +14,7 @@ The committed numerical answer is in [reports/execution_research.md](reports/exe
 - `bin/main.ml` command line
 - `configs/` experiment files
 - `data/processed/synthetic/` fixtures this repository is allowed to ship
-- `notebooks/` six notebooks over those outputs
+- `scripts/` Binance capture client, figure builder, research note
 - `docs/` semantics and limits
 
 Details: [docs/architecture.md](docs/architecture.md), [docs/queue_models.md](docs/queue_models.md), [docs/assumptions_and_limitations.md](docs/assumptions_and_limitations.md).
@@ -29,11 +29,10 @@ dune build
 dune runtest
 ```
 
-Python, only for figures and notebooks:
+Python, only for figures and the research note:
 
 ```
 python3 -m pip install -r requirements.txt
-python3 -m ipykernel install --user --name queuelab
 ```
 
 ## Commands
@@ -58,27 +57,16 @@ Exit codes: 0 success, 1 failed validation or a gap, 2 bad usage.
 
 `make test`, `make experiment`, `make bench` and `make figures` wrap the same steps.
 
-## Notebooks
+## Figures
 
 From the repository root, after the experiment and benchmark files exist:
 
 ```
 python3 scripts/build_figures.py
 python3 scripts/write_report.py
-python3 scripts/make_notebooks.py
-python3 scripts/execute_notebooks.py
 ```
 
-| Notebook | Reads |
-|---|---|
-| `01_data_quality` | validation JSON, canonical log |
-| `02_order_book_diagnostics` | `book_series.csv` |
-| `03_latency_and_slippage` | sensitivity and executions |
-| `04_queue_model_sensitivity` | session grid and the divergence fixture |
-| `05_adverse_selection` | markouts |
-| `06_performance_and_validation` | `bench.json` |
-
-Figures land in `reports/figures/` as PNG and PDF. A missing input is an error.
+`scripts/analysis.py` only reads engine outputs. Figures land in `reports/figures/` as PNG and PDF. A missing input is an error. The numerical write-up is `reports/execution_research.md`.
 
 ## Reproduce the committed run
 
@@ -100,7 +88,7 @@ python3 scripts/capture_binance.py --self-test
 
 ## Benchmark method
 
-Release binary, one warmup call discarded, then repeated wall-clock samples. Median is what the report quotes. The synthetic stream is generated in process at the requested step count. Checkpoint timing is the final book only. See `reports/bench.json` and notebook 06.
+Release binary, one warmup call discarded, then repeated wall-clock samples. Median is what the report quotes. The synthetic stream is generated in process at the requested step count. Checkpoint timing is the final book only. See `reports/bench.json` and `reports/execution_research.md`.
 
 ## Limits
 

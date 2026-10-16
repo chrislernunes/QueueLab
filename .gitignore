@@ -7,7 +7,6 @@ _opam/
 *.native
 *.byte
 __pycache__/
-.ipynb_checkpoints/
 .pytest_cache/
 data/raw/
 data/processed/capture/
