@@ -1,5 +1,6 @@
 /* Load committed report files and draw them. Does not invent rows. */
 (function () {
+  const scriptURL = document.currentScript && document.currentScript.src;
   const MODELS = ["conservative", "probabilistic", "optimistic"];
   const COLORS = { conservative: "#141414", probabilistic: "#6a6a6a", optimistic: "#b5b5b5" };
 
@@ -29,6 +30,15 @@
 
   async function getJSON(path) {
     return JSON.parse(await getText(path));
+  }
+
+  /* Branch Pages serves this file from /site/ and the reports live in the repo.
+     An assembled _site keeps the copied data/ names next to site.js. */
+  function file(assembled, repoRel) {
+    if (!scriptURL) return assembled;
+    const u = new URL(scriptURL);
+    if (u.pathname.endsWith("/site/site.js")) return new URL(repoRel, new URL("../", u)).href;
+    return new URL(assembled, u).href;
   }
 
   function fmt(n, d) {
@@ -282,21 +292,21 @@
 
   async function main() {
     const [sensText, markH, offset, divExec, book, bench, quality, meta, baseline, capture, divQ, report, cfgS, cfgD, cfgB] = await Promise.all([
-      getText("data/sensitivity.csv"),
-      getText("data/markout_horizons.csv"),
-      getText("data/fill_rate_by_offset.csv"),
-      getText("data/divergence_executions.csv"),
-      getText("data/book_series.csv"),
-      getJSON("data/bench.json"),
-      getJSON("data/data_quality.json"),
-      getJSON("data/queue_sensitivity.json"),
-      getText("data/baseline_sensitivity.csv"),
-      getJSON("data/capture_attempt.json"),
-      getJSON("data/divergence_quality.json"),
-      getText("data/execution_research.md"),
-      getJSON("data/queue_sensitivity_config.json"),
-      getJSON("data/divergence_config.json"),
-      getJSON("data/baseline_config.json")
+      getText(file("data/sensitivity.csv", "reports/sensitivity.csv")),
+      getText(file("data/markout_horizons.csv", "reports/figures/markout_horizons.csv")),
+      getText(file("data/fill_rate_by_offset.csv", "reports/figures/fill_rate_by_offset.csv")),
+      getText(file("data/divergence_executions.csv", "reports/divergence/executions.csv")),
+      getText(file("data/book_series.csv", "reports/book_series.csv")),
+      getJSON(file("data/bench.json", "reports/bench.json")),
+      getJSON(file("data/data_quality.json", "reports/data_quality.json")),
+      getJSON(file("data/queue_sensitivity.json", "reports/queue_sensitivity.json")),
+      getText(file("data/baseline_sensitivity.csv", "reports/baseline/sensitivity.csv")),
+      getJSON(file("data/capture_attempt.json", "reports/capture_attempt.json")),
+      getJSON(file("data/divergence_quality.json", "reports/divergence/data_quality.json")),
+      getText(file("data/execution_research.md", "reports/execution_research.md")),
+      getJSON(file("data/queue_sensitivity_config.json", "configs/queue_sensitivity.json")),
+      getJSON(file("data/divergence_config.json", "configs/divergence.json")),
+      getJSON(file("data/baseline_config.json", "configs/baseline.json"))
     ]);
 
     const sens = parseCSV(sensText);

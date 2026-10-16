@@ -1,8 +1,6 @@
 name: pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -25,8 +23,6 @@ jobs:
       - name: assemble
         run: sh scripts/assemble_site.sh _site
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
