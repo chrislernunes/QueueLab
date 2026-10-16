@@ -88,34 +88,50 @@
     return Math.sign(v) * Math.ceil(Math.abs(v) / p) * p;
   }
 
+  let clipSeq = 0;
+
   function chartFrame(w, h, pad, yMin, yMax, xLabels) {
-    const svg = svgEl("svg", { viewBox: `0 0 ${w} ${h}`, role: "img" });
+    const svg = svgEl("svg", {
+      viewBox: `0 0 ${w} ${h}`,
+      width: String(w),
+      height: String(h),
+      role: "img"
+    });
     const innerW = w - pad.l - pad.r;
     const innerH = h - pad.t - pad.b;
     const y0 = yMin;
     const y1 = yMax === yMin ? yMin + 1 : yMax;
     const yScale = (v) => pad.t + innerH - ((v - y0) / (y1 - y0)) * innerH;
     const n = Math.max(xLabels.length, 1);
-    const xScale = (i) => pad.l + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
-    svg.appendChild(svgEl("line", { x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + innerH, stroke: "#e4e4e4" }));
-    svg.appendChild(svgEl("line", { x1: pad.l, y1: pad.t + innerH, x2: pad.l + innerW, y2: pad.t + innerH, stroke: "#e4e4e4" }));
+    const xScale = (i) => pad.l + ((i + 0.5) / n) * innerW;
+    const id = "plot" + (++clipSeq);
+    const clip = svgEl("clipPath", { id: id });
+    clip.appendChild(svgEl("rect", { x: pad.l, y: pad.t, width: innerW, height: innerH }));
+    const defs = svgEl("defs", {});
+    defs.appendChild(clip);
+    svg.appendChild(defs);
+    const chrome = [];
+    function guide(el) { chrome.push(el); svg.appendChild(el); }
+    guide(svgEl("line", { x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + innerH, stroke: "#e4e4e4" }));
+    guide(svgEl("line", { x1: pad.l, y1: pad.t + innerH, x2: pad.l + innerW, y2: pad.t + innerH, stroke: "#e4e4e4" }));
     [y0, (y0 + y1) / 2, y1].forEach((v) => {
       const y = yScale(v);
-      svg.appendChild(svgEl("line", { x1: pad.l, y1: y, x2: pad.l + innerW, y2: y, stroke: "#f0f0f0" }));
-      const label = svgEl("text", { x: pad.l - 8, y: y + 3, "text-anchor": "end", fill: "#8a8a8a", "font-size": "11", "font-family": "IBM Plex Mono, ui-monospace, monospace" });
-      label.textContent = Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2);
-      svg.appendChild(label);
+      guide(svgEl("line", { x1: pad.l, y1: y, x2: pad.l + innerW, y2: y, stroke: "#f0f0f0" }));
+      const label = svgEl("text", { x: pad.l - 8, y: y + 4, "text-anchor": "end", fill: "#8a8a8a", "font-size": "11", "font-family": "IBM Plex Mono, ui-monospace, monospace" });
+      label.textContent = Math.abs(v) >= 100 ? String(Math.round(v)) : v.toFixed(2);
+      guide(label);
     });
     xLabels.forEach((lab, i) => {
-      const label = svgEl("text", { x: xScale(i), y: h - 8, "text-anchor": "middle", fill: "#5c5c5c", "font-size": "11", "font-family": "IBM Plex Mono, ui-monospace, monospace" });
+      const label = svgEl("text", { x: xScale(i), y: h - 12, "text-anchor": "middle", fill: "#5c5c5c", "font-size": "11", "font-family": "IBM Plex Mono, ui-monospace, monospace" });
       label.textContent = lab;
-      svg.appendChild(label);
+      guide(label);
     });
-    return { svg, xScale, yScale, innerW, n };
+    function raise() { chrome.forEach((el) => svg.appendChild(el)); }
+    return { svg, xScale, yScale, innerW, n, clip: "url(#" + id + ")", raise };
   }
 
   function groupedBars(spec) {
-    const w = 520, h = 280, pad = { l: 52, t: 16, r: 12, b: 32 };
+    const w = 520, h = 280, pad = { l: 58, t: 18, r: 18, b: 36 };
     const delays = spec.x;
     let yMin = spec.yMin != null ? spec.yMin : 0;
     let yMax = spec.yMax != null ? spec.yMax : 0;
@@ -124,39 +140,47 @@
       yMax = Math.max(yMax, v);
       yMin = Math.min(yMin, v);
     }));
+    spec.series.forEach((s) => {
+      (s.hi || []).forEach((v) => { if (v != null && !Number.isNaN(v)) yMax = Math.max(yMax, v); });
+      (s.lo || []).forEach((v) => { if (v != null && !Number.isNaN(v)) yMin = Math.min(yMin, v); });
+    });
     if (spec.yMax == null) yMax = yMax === 0 ? 1 : nice(yMax * 1.12);
+    else if (yMax > spec.yMax) yMax = nice(yMax * 1.08);
     if (spec.yMin == null && yMin < 0) yMin = -nice(Math.abs(yMin) * 1.12);
+    else if (spec.yMin != null && yMin < spec.yMin) yMin = -nice(Math.abs(yMin) * 1.08);
     const frame = chartFrame(w, h, pad, yMin, yMax, spec.xLabels);
     const group = frame.innerW / Math.max(delays.length, 1);
-    const barW = Math.min(18, (group * 0.7) / spec.series.length);
+    const barW = Math.min(16, (group * 0.62) / spec.series.length);
     spec.series.forEach((s, si) => {
       s.values.forEach((v, i) => {
         if (v == null || Number.isNaN(v)) return;
         const cx = frame.xScale(i) - ((spec.series.length - 1) * barW) / 2 + si * barW;
         const y = frame.yScale(v);
-        const yBase = frame.yScale(Math.max(yMin, 0));
+        const yBase = frame.yScale(Math.max(yMin, 0) === 0 && yMin <= 0 ? 0 : yMin);
         const rect = svgEl("rect", {
           x: cx - barW / 2 + 1,
           y: Math.min(y, yBase),
-          width: barW - 2,
+          width: Math.max(1, barW - 2),
           height: Math.max(1, Math.abs(yBase - y)),
-          fill: COLORS[s.name] || "#141414"
+          fill: COLORS[s.name] || "#141414",
+          "clip-path": frame.clip
         });
         rect.appendChild(svgEl("title", {})).textContent = s.name + " " + spec.xLabels[i] + ": " + v.toFixed(4);
         frame.svg.appendChild(rect);
         if (s.lo && s.hi && s.lo[i] != null && s.hi[i] != null) {
           const y1 = frame.yScale(s.lo[i]);
           const y2 = frame.yScale(s.hi[i]);
-          frame.svg.appendChild(svgEl("line", { x1: cx, y1: y1, x2: cx, y2: y2, stroke: COLORS[s.name], "stroke-width": 1 }));
+          frame.svg.appendChild(svgEl("line", { x1: cx, y1: y1, x2: cx, y2: y2, stroke: COLORS[s.name], "stroke-width": 1, "clip-path": frame.clip }));
         }
       });
     });
+    frame.raise();
     frame.svg.setAttribute("aria-label", spec.title);
     return frame.svg;
   }
 
   function lines(spec) {
-    const w = 520, h = 280, pad = { l: 52, t: 16, r: 12, b: 32 };
+    const w = 520, h = 280, pad = { l: 58, t: 18, r: 18, b: 36 };
     let yMin = Infinity, yMax = -Infinity;
     spec.series.forEach((s) => s.values.forEach((v) => {
       if (v == null || Number.isNaN(v)) return;
@@ -165,12 +189,12 @@
     }));
     if (!isFinite(yMin)) { yMin = 0; yMax = 1; }
     const span = yMax - yMin || 1;
-    yMin -= span * 0.12;
-    yMax += span * 0.12;
+    yMin -= span * 0.16;
+    yMax += span * 0.16;
     const frame = chartFrame(w, h, pad, yMin, yMax, spec.xLabels);
     spec.series.forEach((s) => {
       const pts = s.values.map((v, i) => (v == null ? null : frame.xScale(i) + "," + frame.yScale(v))).filter(Boolean);
-      frame.svg.appendChild(svgEl("polyline", { points: pts.join(" "), fill: "none", stroke: COLORS[s.name] || "#141414", "stroke-width": 1.4 }));
+      frame.svg.appendChild(svgEl("polyline", { points: pts.join(" "), fill: "none", stroke: COLORS[s.name] || "#141414", "stroke-width": 1.4, "clip-path": frame.clip }));
       s.values.forEach((v, i) => {
         if (v == null) return;
         const c = svgEl("circle", { cx: frame.xScale(i), cy: frame.yScale(v), r: 2.6, fill: COLORS[s.name] || "#141414" });
@@ -178,23 +202,34 @@
         frame.svg.appendChild(c);
       });
     });
+    frame.raise();
     frame.svg.setAttribute("aria-label", spec.title);
     return frame.svg;
   }
 
   function simpleBars(labels, values, title) {
-    const w = 520, h = 240, pad = { l: 52, t: 16, r: 12, b: 32 };
-    const yMax = Math.max(1, ...values) * 1.15;
+    const w = 520, h = 250, pad = { l: 58, t: 18, r: 18, b: 36 };
+    const hi = Math.max(0, ...values);
+    const yMax = hi === 0 ? 1 : hi * 1.18;
     const frame = chartFrame(w, h, pad, 0, yMax, labels);
     const group = frame.innerW / Math.max(labels.length, 1);
+    const barW = Math.min(36, group * 0.42);
     values.forEach((v, i) => {
       const cx = frame.xScale(i);
       const y = frame.yScale(v);
       const yBase = frame.yScale(0);
-      const rect = svgEl("rect", { x: cx - Math.min(28, group * 0.28), y: y, width: Math.min(56, group * 0.56), height: Math.max(1, yBase - y), fill: "#141414" });
+      const rect = svgEl("rect", {
+        x: cx - barW / 2,
+        y: Math.min(y, yBase),
+        width: barW,
+        height: Math.max(1, Math.abs(yBase - y)),
+        fill: "#141414",
+        "clip-path": frame.clip
+      });
       rect.appendChild(svgEl("title", {})).textContent = labels[i] + ": " + v;
       frame.svg.appendChild(rect);
     });
+    frame.raise();
     frame.svg.setAttribute("aria-label", title);
     return frame.svg;
   }
@@ -218,9 +253,10 @@
       return px + "," + py;
     });
     frame.svg.appendChild(svgEl("polyline", { points: coords.join(" "), fill: "none", stroke: "#141414", "stroke-width": 1.2 }));
-    const cap = svgEl("text", { x: w / 2, y: h - 8, "text-anchor": "middle", fill: "#5c5c5c", "font-size": "11", "font-family": "IBM Plex Mono, ui-monospace, monospace" });
+    const cap = svgEl("text", { x: w / 2, y: h - 12, "text-anchor": "middle", fill: "#5c5c5c", "font-size": "11", "font-family": "IBM Plex Mono, ui-monospace, monospace" });
     cap.textContent = "event time (s) · " + labels.join("  ");
     frame.svg.appendChild(cap);
+    frame.raise();
     frame.svg.setAttribute("aria-label", "Synthetic session mid path");
     return frame.svg;
   }
@@ -315,10 +351,11 @@
 
     const facts = document.getElementById("facts");
     const eps = bench.events_per_second_synthetic_median;
+    const cpu = bench.cpu.split("@")[0].replace(/\(R\)/g, "").replace(/\s+CPU\s*$/, "").trim();
     facts.innerHTML = `
-      <div class="fact"><span>Language</span><b>OCaml ${bench.ocaml}</b><small>stdlib + Yojson · profile ${bench.profile}</small></div>
-      <div class="fact"><span>Committed run</span><b>synthetic</b><small>${quality.counts.depth} depth · ${quality.counts.trade} trades · gaps ${quality.gaps}</small></div>
-      <div class="fact"><span>Replay, this machine</span><b>${(eps / 1e6).toFixed(2)}e6 ev/s</b><small>${bench.cpu.split("@")[0].trim()}</small></div>
+      <div class="fact"><span>Language</span><b>OCaml ${bench.ocaml}</b><small>stdlib + Yojson</small><small>${bench.profile} profile</small></div>
+      <div class="fact"><span>Committed run</span><b>synthetic</b><small>${quality.counts.depth} depth</small><small>${quality.counts.trade} trades · gaps ${quality.gaps}</small></div>
+      <div class="fact"><span>Replay, this machine</span><b>${(eps / 1e6).toFixed(2)}e6 ev/s</b><small>${cpu}</small></div>
       <div class="fact"><span>Live capture</span><b>none committed</b><small>${capture.messages} messages stored</small></div>`;
 
     const rates = MODELS.map((m) => by(m).map((r) => Number(r.fill_rate)));
