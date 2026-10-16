@@ -93,10 +93,10 @@
   function chartFrame(w, h, pad, yMin, yMax, xLabels) {
     const svg = svgEl("svg", {
       viewBox: `0 0 ${w} ${h}`,
-      width: String(w),
-      height: String(h),
+      preserveAspectRatio: "xMidYMid meet",
       role: "img"
     });
+    svg.style.aspectRatio = w + " / " + h;
     const innerW = w - pad.l - pad.r;
     const innerH = h - pad.t - pad.b;
     const y0 = yMin;
@@ -306,8 +306,8 @@
           i++;
         }
         const head = rows.shift() || [];
-        out.push("<table><thead><tr>" + head.map((c) => "<th>" + inline(c) + "</th>").join("") + "</tr></thead><tbody>" +
-          rows.map((r) => "<tr>" + r.map((c) => "<td>" + inline(c) + "</td>").join("") + "</tr>").join("") + "</tbody></table>");
+        out.push("<div class=\"table-wrap\"><table><thead><tr>" + head.map((c) => "<th>" + inline(c) + "</th>").join("") + "</tr></thead><tbody>" +
+          rows.map((r) => "<tr>" + r.map((c) => "<td>" + inline(c) + "</td>").join("") + "</tr>").join("") + "</tbody></table></div>");
         continue;
       }
       if (line.startsWith("### ")) { out.push("<h3>" + inline(line.slice(4)) + "</h3>"); i++; continue; }
