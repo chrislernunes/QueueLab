@@ -1,6 +1,6 @@
 # Architecture
 
-QueueLab is a sequential, deterministic research engine. Network capture is outside the simulator. Figure scripts read files the simulator already wrote.
+queue_positioning is a sequential, deterministic research engine. Network capture is outside the simulator. Figure scripts read files the simulator already wrote.
 
 ## Libraries
 
