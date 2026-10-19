@@ -1,15 +1,15 @@
 opam-version: "2.0"
 synopsis: "Deterministic market replay, queue-position inference and execution simulation"
 description: """
-QueueLab replays public market data, reconstructs a price-level book,
+queue_positioning replays public market data, reconstructs a price-level book,
 and simulates passive-order execution under explicit latency and
 queue-position assumptions. It does not submit real orders.
 """
 maintainer: "Chrisler Nunes <nuneschrisler@gmail.com>"
 authors: "Chrisler Nunes"
 license: "MIT"
-homepage: "https://github.com/chrislernunes/QueueLab"
-bug-reports: "https://github.com/chrislernunes/QueueLab/issues"
+homepage: "https://github.com/chrislernunes/queue_positioning"
+bug-reports: "https://github.com/chrislernunes/queue_positioning/issues"
 depends: [
   "ocaml" {>= "4.14.0"}
   "dune" {>= "3.16"}
