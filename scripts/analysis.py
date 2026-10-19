@@ -1,4 +1,4 @@
-"""Load QueueLab outputs. Does not simulate a book or a fill."""
+"""Load queue_positioning outputs. Does not simulate a book or a fill."""
 
 from __future__ import annotations
 
