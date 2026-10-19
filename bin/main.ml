@@ -1,14 +1,14 @@
 let usage =
-  {|QueueLab — market replay, queue inference, execution simulation
+  {|queue_positioning — market replay, queue inference, execution simulation
 
-  dune exec queuelab -- validate --dataset DIR
-  dune exec queuelab -- replay --dataset DIR
-  dune exec queuelab -- generate-fixture --out DIR [--steps N] [--seed N] [--scenario session|divergence]
-  dune exec queuelab -- simulate --config FILE
-  dune exec queuelab -- experiment --config FILE
-  dune exec queuelab -- benchmark --dataset DIR --synthetic-events N --out FILE
-  dune exec queuelab -- normalize --raw DIR --out DIR
-  dune exec queuelab -- capture --symbol SYM --duration-seconds N [--out DIR]
+  dune exec queue_positioning -- validate --dataset DIR
+  dune exec queue_positioning -- replay --dataset DIR
+  dune exec queue_positioning -- generate-fixture --out DIR [--steps N] [--seed N] [--scenario session|divergence]
+  dune exec queue_positioning -- simulate --config FILE
+  dune exec queue_positioning -- experiment --config FILE
+  dune exec queue_positioning -- benchmark --dataset DIR --synthetic-events N --out FILE
+  dune exec queue_positioning -- normalize --raw DIR --out DIR
+  dune exec queue_positioning -- capture --symbol SYM --duration-seconds N [--out DIR]
 
 Exit codes: 0 ok, 1 data or simulation failure, 2 usage.
 Run from the repository root. Capture uses scripts/capture_binance.py
@@ -36,28 +36,28 @@ let require name argv =
 
 let cmd_validate argv =
   let dir = require "--dataset" argv in
-  let r = Queuelab.Validation.validate dir in
-  print_endline (Queuelab.Jsonx.to_string_pretty (Queuelab.Validation.report_json r));
+  let r = Queue_positioning.Validation.validate dir in
+  print_endline (Queue_positioning.Jsonx.to_string_pretty (Queue_positioning.Validation.report_json r));
   if r.ok then exit 0 else exit 1
 
 let cmd_replay argv =
   let dir = require "--dataset" argv in
-  let man, events = Queuelab.Manifest.load dir in
-  let r = Queuelab.Replay.replay man.instrument events in
+  let man, events = Queue_positioning.Manifest.load dir in
+  let r = Queue_positioning.Replay.replay man.instrument events in
   let bid =
-    match Queuelab.Order_book.best_bid r.sync.book with
+    match Queue_positioning.Order_book.best_bid r.sync.book with
     | None -> "none"
     | Some (p, q) -> Printf.sprintf "%Ld x %Ld" p q
   in
   let ask =
-    match Queuelab.Order_book.best_ask r.sync.book with
+    match Queue_positioning.Order_book.best_ask r.sync.book with
     | None -> "none"
     | Some (p, q) -> Printf.sprintf "%Ld x %Ld" p q
   in
   Printf.printf "symbol %s synthetic %b\n" man.symbol man.synthetic;
   Printf.printf "events %d hash %s mode %s\n" r.events_consumed r.hash r.sync_mode;
   Printf.printf "bid %s ask %s spread %s\n" bid ask
-    (match Queuelab.Order_book.spread r.sync.book with
+    (match Queue_positioning.Order_book.spread r.sync.book with
     | None -> "na"
     | Some s -> Int64.to_string s);
   Printf.printf "gaps %d duplicates %d crossed %d\n" r.diagnostics.gaps r.diagnostics.duplicates
@@ -68,7 +68,7 @@ let cmd_fixture argv =
   let dir = require "--out" argv in
   match flag "--scenario" argv with
   | Some "divergence" ->
-      let man = Queuelab.Synthetic.write_divergence ~dir in
+      let man = Queue_positioning.Synthetic.write_divergence ~dir in
       Printf.printf "wrote %s scenario=divergence sha256=%s synthetic=true\n" dir
         (List.hd man.files).sha256;
       exit 0
@@ -76,15 +76,15 @@ let cmd_fixture argv =
   | None ->
       let steps = flag_int "--steps" 4000 argv in
       let seed = flag_i64 "--seed" 7L argv in
-      let man, events = Queuelab.Synthetic.write_session ~dir ~seed ~steps in
+      let man, events = Queue_positioning.Synthetic.write_session ~dir ~seed ~steps in
       Printf.printf "wrote %s events=%d sha256=%s synthetic=true\n" dir (List.length events)
         (List.hd man.files).sha256;
       exit 0
 
 let cmd_experiment argv =
   let path = require "--config" argv in
-  let spec = Queuelab.Experiment.load_spec path in
-  let out, n, hash = Queuelab.Experiment.run_spec spec in
+  let spec = Queue_positioning.Experiment.load_spec path in
+  let out, n, hash = Queue_positioning.Experiment.run_spec spec in
   Printf.printf "wrote %s intents=%d book_hash=%s\n" out n hash;
   exit 0
 
@@ -94,13 +94,13 @@ let cmd_benchmark argv =
   let dataset = require "--dataset" argv in
   let steps = flag_int "--synthetic-events" 50000 argv in
   let out = require "--out" argv in
-  let j = Queuelab.Benchmark.run ~dataset ~steps ~out in
-  print_endline (Queuelab.Jsonx.to_string j);
+  let j = Queue_positioning.Benchmark.run ~dataset ~steps ~out in
+  print_endline (Queue_positioning.Jsonx.to_string j);
   exit 0
 
 let instrument_of_filters path symbol =
-  let j = Queuelab.Jsonx.of_file path in
-  Queuelab.Instrument.of_json j |> fun inst ->
+  let j = Queue_positioning.Jsonx.of_file path in
+  Queue_positioning.Instrument.of_json j |> fun inst ->
   if inst.symbol <> symbol && inst.symbol <> "" then inst else { inst with symbol }
 
 let cmd_normalize argv =
@@ -114,7 +114,7 @@ let cmd_normalize argv =
     if Sys.file_exists filters then instrument_of_filters filters symbol
     else
       match
-        Queuelab.Instrument.make ~symbol
+        Queue_positioning.Instrument.make ~symbol
           ~price_scale:(flag_int "--price-scale" 2 argv)
           ~qty_scale:(flag_int "--qty-scale" 5 argv)
           ~tick:(flag_i64 "--tick" 1L argv)
@@ -123,17 +123,17 @@ let cmd_normalize argv =
       | Ok i -> i
       | Error e -> die_usage e
   in
-  let lines = Queuelab.Event_log.read_lines (Filename.concat raw "raw.jsonl") in
+  let lines = Queue_positioning.Event_log.read_lines (Filename.concat raw "raw.jsonl") in
   let events, errors =
     List.fold_left
       (fun (acc, errs) (i, line) ->
         try
-          let j = Queuelab.Jsonx.of_string line in
-          let kind = Queuelab.Jsonx.string_of (Queuelab.Jsonx.require "kind" j) in
-          let rx = Queuelab.Jsonx.i64_of (Queuelab.Jsonx.require "rx_us" j) in
-          let payload = Queuelab.Jsonx.require "payload" j in
+          let j = Queue_positioning.Jsonx.of_string line in
+          let kind = Queue_positioning.Jsonx.string_of (Queue_positioning.Jsonx.require "kind" j) in
+          let rx = Queue_positioning.Jsonx.i64_of (Queue_positioning.Jsonx.require "rx_us" j) in
+          let payload = Queue_positioning.Jsonx.require "payload" j in
           match
-            Queuelab.Binance_decoder.decode_raw inst ~seq:(Int64.of_int i) ~synthetic:false
+            Queue_positioning.Binance_decoder.decode_raw inst ~seq:(Int64.of_int i) ~synthetic:false
               ~provenance:"binance-spot-public"
               { rx_us = rx; kind; payload }
           with
@@ -147,12 +147,12 @@ let cmd_normalize argv =
     List.iter (fun e -> prerr_endline ("decode: " ^ e)) errors;
     exit 1);
   let events = List.rev events in
-  let replay = Queuelab.Replay.replay ~stop_on_gap:false inst events in
+  let replay = Queue_positioning.Replay.replay ~stop_on_gap:false inst events in
   let gaps =
     List.filter_map
       (fun e ->
-        match (e : Queuelab.Event.t).kind with
-        | Queuelab.Event.Gap g -> Some (g.expected_id, g.actual_id, g.reason)
+        match (e : Queue_positioning.Event.t).kind with
+        | Queue_positioning.Event.Gap g -> Some (g.expected_id, g.actual_id, g.reason)
         | _ -> None)
       events
     @ List.map (fun (a, b, r) -> (a, b, r)) replay.sync.gaps
@@ -162,7 +162,7 @@ let cmd_normalize argv =
     ^ replay.sync_mode
   in
   let _man =
-    Queuelab.Manifest.write_dataset ~dir:out ~instrument:inst ~market:"spot" ~synthetic:false
+    Queue_positioning.Manifest.write_dataset ~dir:out ~instrument:inst ~market:"spot" ~synthetic:false
       ~capture_version:"capture-1" ~trade_source:"raw" ~notes ~gaps events
   in
   Printf.printf "normalized %d events mode %s gaps %d\n" (List.length events) replay.sync_mode

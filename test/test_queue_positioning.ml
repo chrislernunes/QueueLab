@@ -1,4 +1,4 @@
-open Queuelab
+open Queue_positioning
 
 let failed = ref 0
 
@@ -284,7 +284,7 @@ let () =
   let rep = Replay.replay inst evs in
   check "synthetic live" (rep.sync_mode = "live");
   check "synthetic invariants" (Invariants.violations rep.sync.book = []);
-  let tmp = Filename.concat (Filename.get_temp_dir_name ()) "queuelab-unit" in
+  let tmp = Filename.concat (Filename.get_temp_dir_name ()) "queue_positioning-unit" in
   let _ = Sys.command (Printf.sprintf "rm -rf %s" tmp) in
   let man, _ = Synthetic.write_session ~dir:tmp ~seed:3L ~steps:30 in
   let v = Validation.validate tmp in

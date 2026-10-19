@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QueueLab — deterministic replay and queue-position research</title>
-  <meta name="description" content="QueueLab is an OCaml research engine for deterministic market replay, queue-position inference, and passive-execution simulation. Synthetic results only; no live Binance book is committed.">
+  <title>queue_positioning — deterministic replay and queue-position research</title>
+  <meta name="description" content="queue_positioning is an OCaml research engine for deterministic market replay, queue-position inference, and passive-execution simulation. Synthetic results only; no live Binance book is committed.">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="QueueLab">
-  <meta property="og:url" content="https://chrislernunes.github.io/QueueLab/">
-  <meta property="og:title" content="QueueLab">
+  <meta property="og:site_name" content="queue_positioning">
+  <meta property="og:url" content="https://chrislernunes.github.io/queue_positioning/">
+  <meta property="og:title" content="queue_positioning">
   <meta property="og:description" content="Deterministic replay and queue-position research for passive execution.">
-  <meta property="og:image" content="https://chrislernunes.github.io/QueueLab/site/preview.png">
+  <meta property="og:image" content="https://chrislernunes.github.io/queue_positioning/site/preview.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="QueueLab. Deterministic replay and queue-position research for passive execution.">
+  <meta property="og:image:alt" content="queue_positioning. Deterministic replay and queue-position research for passive execution.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@chrislernunes">
-  <meta name="twitter:title" content="QueueLab">
+  <meta name="twitter:title" content="queue_positioning">
   <meta name="twitter:description" content="Deterministic replay and queue-position research for passive execution.">
-  <meta name="twitter:image" content="https://chrislernunes.github.io/QueueLab/site/preview.png">
-  <meta name="twitter:image:alt" content="QueueLab. Deterministic replay and queue-position research for passive execution.">
+  <meta name="twitter:image" content="https://chrislernunes.github.io/queue_positioning/site/preview.png">
+  <meta name="twitter:image:alt" content="queue_positioning. Deterministic replay and queue-position research for passive execution.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
 <body>
   <nav class="nav">
     <div class="wrap">
-      <a class="brand" href="#top">QueueLab</a>
+      <a class="brand" href="#top">queue_positioning</a>
       <div class="nav-links" id="site-nav">
         <a href="#problem">Problem</a>
         <a href="#architecture">Architecture</a>
@@ -59,14 +59,14 @@
 
   <header class="hero" id="top">
     <div class="wrap">
-      <h1>QueueLab</h1>
+      <h1>queue_positioning</h1>
       <p class="subtitle">Deterministic replay and queue-position research for passive execution.</p>
-      <p class="lede">A passive order’s fill depends on queue priority the public feed does not contain. QueueLab replays a price-level book, places hypothetical orders under explicit latency and queue assumptions, and records where those assumptions change the answer. It does not send orders and it is not a trading system.</p>
+      <p class="lede">A passive order’s fill depends on queue priority the public feed does not contain. queue_positioning replays a price-level book, places hypothetical orders under explicit latency and queue assumptions, and records where those assumptions change the answer. It does not send orders and it is not a trading system.</p>
       <div class="links">
-        <a href="https://github.com/chrislernunes/QueueLab">GitHub</a>
-        <a href="https://github.com/chrislernunes/QueueLab/tree/main/docs">Documentation</a>
+        <a href="https://github.com/chrislernunes/queue_positioning">GitHub</a>
+        <a href="https://github.com/chrislernunes/queue_positioning/tree/main/docs">Documentation</a>
         <a href="#notes">Research report</a>
-        <a class="ghost" href="https://github.com/chrislernunes/QueueLab/blob/main/reports/execution_research.md">execution_research.md</a>
+        <a class="ghost" href="https://github.com/chrislernunes/queue_positioning/blob/main/reports/execution_research.md">execution_research.md</a>
       </div>
       <div class="facts" id="facts">
         <div class="fact"><span>Language</span><b>OCaml 5.3</b><small>stdlib + Yojson</small></div>
@@ -132,9 +132,9 @@
           <p>A trade at the limit consumes public ahead, then simulated ahead, then the order. A trade strictly through the limit fills the residual. Aggregate trades are ignored for fills when raw trades exist. A cancel that is effective at or before arrival is rejected and never rests. A fill during an in-flight cancel stands. Spread capture on a buy is <code>mid_at_fill − price</code>. Implementation shortfall on a buy is <code>price − decision_mid</code>. Fees hit the ledger immediately and are not subtracted again in those columns. Markouts use a later mid and are ex-post only.</p>
           <h3>Sensitivity and disagreement</h3>
           <p>The session grid varies submit delay and queue model on one synthetic book. The five-event divergence fixture is built so the cancellation rules can disagree. Report both. Do not average the models into a true queue.</p>
-          <pre><code>dune exec queuelab -- experiment \
+          <pre><code>dune exec queue_positioning -- experiment \
   --config configs/queue_sensitivity.json
-dune exec queuelab -- experiment \
+dune exec queue_positioning -- experiment \
   --config configs/divergence.json</code></pre>
         </div>
       </div>
@@ -190,7 +190,7 @@ dune exec queuelab -- experiment \
             </tbody>
           </table>
           </div>
-          <p class="muted">Source: <a href="https://github.com/chrislernunes/QueueLab/blob/main/docs/validation_protocol.md">docs/validation_protocol.md</a>. Read <code>reports/divergence/trace.csv</code> before claiming a fill.</p>
+          <p class="muted">Source: <a href="https://github.com/chrislernunes/queue_positioning/blob/main/docs/validation_protocol.md">docs/validation_protocol.md</a>. Read <code>reports/divergence/trace.csv</code> before claiming a fill.</p>
         </div>
       </div>
     </div>
@@ -217,7 +217,7 @@ dune exec queuelab -- experiment \
       <div class="callout">
         <p>No live Binance depth is in the committed dataset. A capture attempt in this build environment failed with HTTP 451 on the first REST call. No raw file was written and no depth was invented. The offline protocol fixture in <code>test/fixtures/protocol_example</code> did normalize to a live book. A capture with network access to Binance is a different run and is not redistributed here.</p>
       </div>
-      <p class="muted">Latency values in the grid are scenario assumptions, not measured round-trips. The 100 ppm fee is not a Binance fee-tier lookup. <code>Int64</code> multiplication in the ledger wraps on overflow. The probabilistic normal tail for <code>n > 4096</code> is not an exact binomial. Block bootstrap does not remove all dependence. Fuller list: <a href="https://github.com/chrislernunes/QueueLab/blob/main/docs/assumptions_and_limitations.md">docs/assumptions_and_limitations.md</a>.</p>
+      <p class="muted">Latency values in the grid are scenario assumptions, not measured round-trips. The 100 ppm fee is not a Binance fee-tier lookup. <code>Int64</code> multiplication in the ledger wraps on overflow. The probabilistic normal tail for <code>n > 4096</code> is not an exact binomial. Block bootstrap does not remove all dependence. Fuller list: <a href="https://github.com/chrislernunes/queue_positioning/blob/main/docs/assumptions_and_limitations.md">docs/assumptions_and_limitations.md</a>.</p>
     </div>
   </section>
 
@@ -233,23 +233,23 @@ dune build
 dune runtest
 python3 scripts/capture_binance.py --self-test</code></pre>
           <h3>Fixture, validate, replay</h3>
-          <pre><code>dune exec queuelab -- generate-fixture \
+          <pre><code>dune exec queue_positioning -- generate-fixture \
   --out data/processed/synthetic/session --steps 4000 --seed 7
-dune exec queuelab -- validate \
+dune exec queue_positioning -- validate \
   --dataset data/processed/synthetic/session
-dune exec queuelab -- replay \
+dune exec queue_positioning -- replay \
   --dataset data/processed/synthetic/session</code></pre>
         </div>
         <div>
           <h3>Normalize, capture, benchmark</h3>
-          <pre><code>dune exec queuelab -- normalize \
+          <pre><code>dune exec queue_positioning -- normalize \
   --raw test/fixtures/protocol_example \
-  --out /tmp/queuelab-protocol --symbol BTCUSDT
-dune exec queuelab -- capture \
+  --out /tmp/queue_positioning-protocol --symbol BTCUSDT
+dune exec queue_positioning -- capture \
   --symbol BTCUSDT --duration-seconds 30 \
   --out data/raw/btcusdt-30
-QUEUELAB_PROFILE=release dune exec --profile release \
-  queuelab -- benchmark \
+QUEUE_POSITIONING_PROFILE=release dune exec --profile release \
+  queue_positioning -- benchmark \
   --dataset data/processed/synthetic/session \
   --synthetic-events 200000 --out reports/bench.json</code></pre>
           <p class="muted">Exit codes: 0 success, 1 failed validation or a gap, 2 bad usage. <code>simulate</code> and <code>experiment</code> are the same runner. Do not commit raw captures.</p>
@@ -260,12 +260,12 @@ QUEUELAB_PROFILE=release dune exec --profile release \
       <table>
         <thead><tr><th>Path</th><th>What it is</th></tr></thead>
         <tbody>
-          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/lib">lib/</a></td><td>Replay, depth sync, queue models, fill engine, ledger, experiment.</td></tr>
-          <tr><td><a href="https://github.com/chrislernunes/QueueLab/blob/main/bin/main.ml">bin/main.ml</a></td><td>CLI: validate, replay, generate-fixture, experiment, benchmark, normalize, capture.</td></tr>
-          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/configs">configs/</a></td><td>Session grid, divergence, baseline.</td></tr>
-          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/test">test/</a></td><td>Engine tests and the hand-built protocol fixture.</td></tr>
-          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/docs">docs/</a></td><td>Architecture, queue models, exchange semantics, validation, limits.</td></tr>
-          <tr><td><a href="https://github.com/chrislernunes/QueueLab/tree/main/reports">reports/</a></td><td>Committed synthetic outputs, benchmark, research note, figures.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/queue_positioning/tree/main/lib">lib/</a></td><td>Replay, depth sync, queue models, fill engine, ledger, experiment.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/queue_positioning/blob/main/bin/main.ml">bin/main.ml</a></td><td>CLI: validate, replay, generate-fixture, experiment, benchmark, normalize, capture.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/queue_positioning/tree/main/configs">configs/</a></td><td>Session grid, divergence, baseline.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/queue_positioning/tree/main/test">test/</a></td><td>Engine tests and the hand-built protocol fixture.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/queue_positioning/tree/main/docs">docs/</a></td><td>Architecture, queue models, exchange semantics, validation, limits.</td></tr>
+          <tr><td><a href="https://github.com/chrislernunes/queue_positioning/tree/main/reports">reports/</a></td><td>Committed synthetic outputs, benchmark, research note, figures.</td></tr>
         </tbody>
       </table>
       </div>
@@ -283,7 +283,7 @@ QUEUELAB_PROFILE=release dune exec --profile release \
 
   <footer>
     <div class="wrap footer-bar">
-      <div>QueueLab · MIT · Copyright Chrisler Nunes, 2026.</div>
+      <div>queue_positioning · MIT · Copyright Chrisler Nunes, 2026.</div>
       <nav class="social" aria-label="Profiles">
         <a href="https://x.com/chrislernunes" aria-label="X" target="_blank" rel="noopener noreferrer">
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 10.3 22.1 2h-1.8l-6.4 7.2L8.8 2H2.2l7.8 11L2 22h1.8l6.8-7.7L15.1 22h6.6l-8-11.7Zm-2.4 2.7-.8-1.1L4.6 3.3h2.7l5.1 7 .8 1.1 6.6 9.2h-2.7l-5.4-7.6Z"/></svg>

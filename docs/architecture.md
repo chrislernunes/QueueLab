@@ -24,7 +24,7 @@ queue_positioning is a sequential, deterministic research engine. Network captur
 | `synthetic` | Labeled fixtures. |
 | `benchmark` | Wall-clock timings of this binary. |
 
-The public command is `queuelab` (`bin/main.ml`).
+The public command is `queue_positioning` (`bin/main.ml`).
 
 ## What is observed, inferred, simulated
 

@@ -1,4 +1,4 @@
 (test
- (name test_queuelab)
+ (name test_queue_positioning)
  (flags (:standard -w -27-32-33-39))
- (libraries queuelab qcheck-core qcheck-core.runner unix))
+ (libraries queue_positioning qcheck-core qcheck-core.runner unix))

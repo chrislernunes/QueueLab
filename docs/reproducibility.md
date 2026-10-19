@@ -9,20 +9,20 @@ dune build
 dune runtest
 ```
 
-The committed runs used OCaml 5.3.0, Dune 3.24, Yojson 3, qcheck-core 0.91. `queuelab.opam` allows older compatible versions. CI installs the opam constraints on `ubuntu-latest` with compiler 5.3.0.
+The committed runs used OCaml 5.3.0, Dune 3.24, Yojson 3, qcheck-core 0.91. `queue_positioning.opam` allows older compatible versions. CI installs the opam constraints on `ubuntu-latest` with compiler 5.3.0.
 
 ## Fixture and experiment
 
 From the repository root:
 
 ```
-dune exec queuelab -- generate-fixture --out data/processed/synthetic/session --steps 4000 --seed 7
-dune exec queuelab -- validate --dataset data/processed/synthetic/session
-dune exec queuelab -- replay --dataset data/processed/synthetic/session
-dune exec queuelab -- experiment --config configs/queue_sensitivity.json
-dune exec queuelab -- generate-fixture --out data/processed/synthetic/divergence --scenario divergence
-dune exec queuelab -- experiment --config configs/divergence.json
-dune exec queuelab -- simulate --config configs/baseline.json
+dune exec queue_positioning -- generate-fixture --out data/processed/synthetic/session --steps 4000 --seed 7
+dune exec queue_positioning -- validate --dataset data/processed/synthetic/session
+dune exec queue_positioning -- replay --dataset data/processed/synthetic/session
+dune exec queue_positioning -- experiment --config configs/queue_sensitivity.json
+dune exec queue_positioning -- generate-fixture --out data/processed/synthetic/divergence --scenario divergence
+dune exec queue_positioning -- experiment --config configs/divergence.json
+dune exec queue_positioning -- simulate --config configs/baseline.json
 ```
 
 The generator is a pure function of the seed and the step count. The session manifest records the SHA-256. If the hash changes, the generator changed and the report must be regenerated. Do not keep the old prose.
@@ -30,7 +30,7 @@ The generator is a pure function of the seed and the step count. The session man
 ## Benchmark
 
 ```
-QUEUELAB_PROFILE=release dune exec --profile release queuelab -- benchmark \
+QUEUE_POSITIONING_PROFILE=release dune exec --profile release queue_positioning -- benchmark \
   --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json
 ```
 
@@ -48,7 +48,7 @@ python3 scripts/write_report.py
 
 ## Offline
 
-After the opam switch and the Python packages are installed, tests, replay and the synthetic experiment do not need the network. `queuelab capture` does. A failed capture is a failed capture, not a license to invent depth.
+After the opam switch and the Python packages are installed, tests, replay and the synthetic experiment do not need the network. `queue_positioning capture` does. A failed capture is a failed capture, not a license to invent depth.
 
 ## Git
 

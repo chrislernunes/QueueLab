@@ -37,17 +37,17 @@ python3 -m pip install -r requirements.txt
 ## Commands
 
 ```
-dune exec queuelab -- validate --dataset data/processed/synthetic/session
-dune exec queuelab -- replay --dataset data/processed/synthetic/session
-dune exec queuelab -- generate-fixture --out data/processed/synthetic/session --steps 4000 --seed 7
-dune exec queuelab -- generate-fixture --out data/processed/synthetic/divergence --scenario divergence
-dune exec queuelab -- experiment --config configs/queue_sensitivity.json
-dune exec queuelab -- experiment --config configs/divergence.json
-dune exec queuelab -- simulate --config configs/baseline.json
-QUEUELAB_PROFILE=release dune exec --profile release queuelab -- benchmark \
+dune exec queue_positioning -- validate --dataset data/processed/synthetic/session
+dune exec queue_positioning -- replay --dataset data/processed/synthetic/session
+dune exec queue_positioning -- generate-fixture --out data/processed/synthetic/session --steps 4000 --seed 7
+dune exec queue_positioning -- generate-fixture --out data/processed/synthetic/divergence --scenario divergence
+dune exec queue_positioning -- experiment --config configs/queue_sensitivity.json
+dune exec queue_positioning -- experiment --config configs/divergence.json
+dune exec queue_positioning -- simulate --config configs/baseline.json
+QUEUE_POSITIONING_PROFILE=release dune exec --profile release queue_positioning -- benchmark \
   --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json
-dune exec queuelab -- normalize --raw test/fixtures/protocol_example --out /tmp/queuelab-protocol --symbol BTCUSDT
-dune exec queuelab -- capture --symbol BTCUSDT --duration-seconds 30 --out data/raw/btcusdt-30
+dune exec queue_positioning -- normalize --raw test/fixtures/protocol_example --out /tmp/queue_positioning-protocol --symbol BTCUSDT
+dune exec queue_positioning -- capture --symbol BTCUSDT --duration-seconds 30 --out data/raw/btcusdt-30
 ```
 
 Exit codes: 0 success, 1 failed validation or a gap, 2 bad usage.

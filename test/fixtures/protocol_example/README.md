@@ -2,7 +2,7 @@
 
 Hand-written Binance-shaped JSON. Not a market capture and not for research claims.
 
-`raw.jsonl` is enough to exercise `queuelab normalize` offline:
+`raw.jsonl` is enough to exercise `queue_positioning normalize` offline:
 
 - one depth update with `u <= lastUpdateId`, which the sync drops
 - one REST-shaped snapshot

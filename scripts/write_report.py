@@ -105,7 +105,7 @@ def main() -> int:
     a("")
     a("## Benchmark")
     a("")
-    a("Command: `QUEUELAB_PROFILE=release dune exec --profile release queuelab -- benchmark --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json`.")
+    a("Command: `QUEUE_POSITIONING_PROFILE=release dune exec --profile release queue_positioning -- benchmark --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json`.")
     a("")
     a(f"- Machine: {bench['uname']}, {bench['cpu']}, {bench['meminfo'].strip()}")
     a(f"- OCaml: {bench['ocaml']}")

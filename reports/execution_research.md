@@ -73,7 +73,7 @@ Read this next to the session table. The unit scenario is where the models are f
 
 ## Benchmark
 
-Command: `QUEUELAB_PROFILE=release dune exec --profile release queuelab -- benchmark --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json`.
+Command: `QUEUE_POSITIONING_PROFILE=release dune exec --profile release queue_positioning -- benchmark --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json`.
 
 - Machine: Linux 6.12.8+, Intel(R) Xeon(R) Platinum 8481C CPU @ 2.70GHz, MemTotal:        4024496 kB
 - OCaml: 5.3.0

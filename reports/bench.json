@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Measured on the machine that ran queuelab benchmark. Do not cite as a hardware-independent throughput.",
+  "note": "Measured on the machine that ran queue_positioning benchmark. Do not cite as a hardware-independent throughput.",
   "uname": "Linux 6.12.8+",
   "cpu": "Intel(R) Xeon(R) Platinum 8481C CPU @ 2.70GHz",
   "meminfo": "MemTotal:        4024496 kB",

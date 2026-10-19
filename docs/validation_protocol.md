@@ -2,9 +2,9 @@
 
 ## Integrity
 
-`queuelab validate` recomputes the event-file SHA-256, checks the manifest, replays, and returns exit 1 when sync is not live or a check fails. Gaps, duplicate counts and crossed-book observations are in the JSON either way.
+`queue_positioning validate` recomputes the event-file SHA-256, checks the manifest, replays, and returns exit 1 when sync is not live or a check fails. Gaps, duplicate counts and crossed-book observations are in the JSON either way.
 
-`queuelab experiment` calls that check first and does not write a result for an invalid dataset.
+`queue_positioning experiment` calls that check first and does not write a result for an invalid dataset.
 
 ## Replay
 

@@ -1,6 +1,6 @@
 (library
- (name queuelab)
- (public_name queuelab)
+ (name queue_positioning)
+ (public_name queue_positioning)
  (wrapped true)
  (flags (:standard -w -27-32-33-39))
  (libraries yojson unix))

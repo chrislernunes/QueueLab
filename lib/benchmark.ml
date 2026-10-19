@@ -112,13 +112,13 @@ let run ~dataset ~steps ~out =
     Jsonx.obj
       [
         ("schema_version", Jsonx.int 1);
-        ("note", Jsonx.str "Measured on the machine that ran queuelab benchmark. Do not cite as a hardware-independent throughput.");
+        ("note", Jsonx.str "Measured on the machine that ran queue_positioning benchmark. Do not cite as a hardware-independent throughput.");
         ("uname", Jsonx.str (uname ()));
         ("cpu", Jsonx.str (cpu_model ()));
         ("meminfo", Jsonx.str (mem_total_kb ()));
         ("ocaml", Jsonx.str ocaml_version);
         ("profile", Jsonx.str (
-           match Sys.getenv_opt "QUEUELAB_PROFILE" with
+           match Sys.getenv_opt "QUEUE_POSITIONING_PROFILE" with
            | Some s -> s
            | None -> "unspecified"));
         ("dataset", Jsonx.str dataset);

@@ -13,7 +13,7 @@ Nothing under `synthetic/` or `protocol_example/` is a Binance history. The symb
 Capture with:
 
 ```
-dune exec queuelab -- capture --symbol BTCUSDT --duration-seconds 30 --out data/raw/btcusdt-30
+dune exec queue_positioning -- capture --symbol BTCUSDT --duration-seconds 30 --out data/raw/btcusdt-30
 ```
 
 That process uses public streams only. It does not read an API key and it does not place orders. Normalization exits 1 if the depth sequence does not stay live. Keep the raw file if you want to audit the gap. Do not commit it.

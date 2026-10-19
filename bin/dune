@@ -1,5 +1,5 @@
 (executable
  (name main)
- (public_name queuelab)
+ (public_name queue_positioning)
  (flags (:standard -w -27-32-33-39))
- (libraries queuelab unix))
+ (libraries queue_positioning unix))

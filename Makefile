@@ -16,20 +16,20 @@ release:
 	$(DUNE) build --profile release
 
 fixture: build
-	$(DUNE) exec queuelab -- generate-fixture --out data/processed/synthetic/session --steps 4000 --seed 7
+	$(DUNE) exec queue_positioning -- generate-fixture --out data/processed/synthetic/session --steps 4000 --seed 7
 
 validate: fixture
-	$(DUNE) exec queuelab -- validate --dataset data/processed/synthetic/session
+	$(DUNE) exec queue_positioning -- validate --dataset data/processed/synthetic/session
 
 replay: fixture
-	$(DUNE) exec queuelab -- replay --dataset data/processed/synthetic/session
+	$(DUNE) exec queue_positioning -- replay --dataset data/processed/synthetic/session
 
 experiment: fixture
 	mkdir -p reports/figures
-	$(DUNE) exec queuelab -- experiment --config configs/queue_sensitivity.json
+	$(DUNE) exec queue_positioning -- experiment --config configs/queue_sensitivity.json
 
 bench: release fixture
-	QUEUELAB_PROFILE=release $(DUNE) exec --profile release queuelab -- benchmark --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json
+	QUEUE_POSITIONING_PROFILE=release $(DUNE) exec --profile release queue_positioning -- benchmark --dataset data/processed/synthetic/session --synthetic-events 200000 --out reports/bench.json
 
 figures:
 	python3 scripts/build_figures.py

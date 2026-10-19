@@ -1,7 +1,7 @@
 [project]
-name = "queuelab-analysis"
+name = "queue_positioning-analysis"
 version = "0.1.0"
-description = "Figures and the research note for QueueLab. The simulator is the OCaml package."
+description = "Figures and the research note for queue_positioning. The simulator is the OCaml package."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -12,5 +12,5 @@ dependencies = [
   "seaborn==0.13.2",
 ]
 
-[tool.queuelab]
+[tool.queue_positioning]
 note = "Pins match the environment used to draw reports/figures. The OCaml build does not import this file."

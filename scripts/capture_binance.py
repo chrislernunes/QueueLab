@@ -5,7 +5,7 @@ Stdlib only: TLS websocket plus REST snapshot and exchangeInfo. No API key.
 No order endpoints are called.
 
 This process writes raw messages. Normalization and depth-sync live in the
-OCaml engine (`queuelab normalize`). Receive time and exchange time are
+OCaml engine (`queue_positioning normalize`). Receive time and exchange time are
 stored as different fields. Their difference is not a latency.
 
 Raw line schema:
@@ -124,7 +124,7 @@ def whole_ok(s: str) -> bool:
 
 
 def fetch_json(url: str, timeout: float) -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": "queuelab-capture/1"})
+    req = urllib.request.Request(url, headers={"User-Agent": "queue_positioning-capture/1"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         raw = resp.read()
     body = json.loads(raw.decode("utf-8"))
@@ -171,7 +171,7 @@ def connect_ws(path: str, timeout: float) -> tuple[ssl.SSLSocket, bytearray]:
         "Connection: Upgrade\r\n"
         f"Sec-WebSocket-Key: {key}\r\n"
         "Sec-WebSocket-Version: 13\r\n"
-        "User-Agent: queuelab-capture/1\r\n"
+        "User-Agent: queue_positioning-capture/1\r\n"
         "\r\n"
     )
     sock.sendall(req.encode("ascii"))

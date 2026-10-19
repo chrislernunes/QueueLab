@@ -18,11 +18,11 @@ jobs:
         run: opam exec -- dune build && opam exec -- dune runtest
       - name: fixture, validate, experiment
         run: |
-          opam exec -- dune exec queuelab -- generate-fixture --out data/processed/synthetic/session --steps 400 --seed 7
-          opam exec -- dune exec queuelab -- validate --dataset data/processed/synthetic/session
-          opam exec -- dune exec queuelab -- replay --dataset data/processed/synthetic/session
-          opam exec -- dune exec queuelab -- experiment --config configs/queue_sensitivity.json
-          opam exec -- dune exec queuelab -- normalize --raw test/fixtures/protocol_example --out /tmp/queuelab-protocol --symbol BTCUSDT
+          opam exec -- dune exec queue_positioning -- generate-fixture --out data/processed/synthetic/session --steps 400 --seed 7
+          opam exec -- dune exec queue_positioning -- validate --dataset data/processed/synthetic/session
+          opam exec -- dune exec queue_positioning -- replay --dataset data/processed/synthetic/session
+          opam exec -- dune exec queue_positioning -- experiment --config configs/queue_sensitivity.json
+          opam exec -- dune exec queue_positioning -- normalize --raw test/fixtures/protocol_example --out /tmp/queue_positioning-protocol --symbol BTCUSDT
       - name: capture frame self-test
         run: python3 scripts/capture_binance.py --self-test
       - name: python analysis imports
